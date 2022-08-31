@@ -28,15 +28,15 @@ namespace Travel.Controllers
             }
         }
 
-        //         // POST api/animals
-        //         [HttpPost]
-        //         public async Task<ActionResult<City>> Post(City city)
-        //         {
-        //             _db.Cities.Add(city);
-        //             await _db.SaveChangesAsync();
+        // POST api/reviews
+        [HttpPost]
+        public async Task<ActionResult<Review>> Post(Review review)
+        {
+            _db.Reviews.Add(review);
+            await _db.SaveChangesAsync();
 
-        //             return CreatedAtAction("Post", new { id = city.CityId }, city);
-        //         }
+            return CreatedAtAction("Post", new { id = review.ReviewId }, review);
+        }
 
         //         [HttpGet("{id}")]
         //         public async Task<ActionResult<City>> GetCity(int id)
