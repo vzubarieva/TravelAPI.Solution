@@ -21,11 +21,16 @@ namespace Travel.Controllers
 
         // GET api/reviews
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Review>>> Get()
+        public async Task<ActionResult<IEnumerable<Review>>> Get(int mostPopular)
         {
+            IQueryable<Review> query = _db.Reviews.AsQueryable();
+
+            if (mostPopular > 0)
             {
-                return await _db.Reviews.ToListAsync();
+                query = query.Where(entry => entry.Rating >= mostPopular);
             }
+
+            return await query.ToListAsync();
         }
 
         // POST api/reviews
