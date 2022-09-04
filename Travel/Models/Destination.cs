@@ -17,4 +17,6 @@ namespace Travel.Models
 
         public virtual ICollection<Review> Reviews { get; set; }
     }
+
+
 }

@@ -42,7 +42,7 @@ namespace Travel.Controllers
                 query = reviews
                     .Join(
                         destinations,
-                        review => review.ReviewId,
+                        review => review.DestinationId,
                         destination => destination.DestinationId,
                         (review, destination) => new { Review = review, Destination = destination } // two tables now combined into single object
                     )

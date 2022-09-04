@@ -14,6 +14,14 @@ namespace Travel.Controllers
     {
         private readonly TravelContext _db;
 
+        // public class ResultGrouping
+        // {
+        //     public int DestinationId { get; set; }
+
+        //     // public Review[] Results { get; set; }
+        //     public int Count { get; set; }
+        // }
+
         public DestinationsController(TravelContext db)
         {
             _db = db;
@@ -30,6 +38,36 @@ namespace Travel.Controllers
             }
 
             return await query.ToListAsync();
+        }
+
+        [HttpGet("MostPopular")]
+        // public async Task<ActionResult<IEnumerable<ResultGrouping>>> GetMostPopular(int limit)
+        public async Task<ActionResult<IEnumerable<Destination>>> GetMostPopular(int limit)
+        {
+            IQueryable<Review> reviews = _db.Reviews;
+            IQueryable<Destination> destinations = _db.Destinations;
+
+            IQueryable<Destination> sortedDestinations = reviews
+                // .Join(
+                //     destinations,
+                //     review => review.DestinationId,
+                //     destination => destination.DestinationId,
+                //     (review, destination) => new { Review = review, Destination = destination } // two tables now combined into single object
+                // )
+                .GroupBy(r => r.DestinationId)
+                .OrderByDescending(r => r.Count())
+                .Select(r => destinations.FirstOrDefault(d => d.DestinationId == r.Key));
+            // .Select(
+            //     r =>
+            //         new ResultGrouping
+            //         {
+            //             DestinationId = r.Key,
+            //             // Results = r.ToArray(),
+            //             Count = r.Count()
+            //         }
+            // );
+
+            return await sortedDestinations.ToListAsync();
         }
     }
 }
