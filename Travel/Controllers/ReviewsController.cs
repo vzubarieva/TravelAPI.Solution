@@ -21,13 +21,33 @@ namespace Travel.Controllers
 
         // GET api/reviews
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Review>>> Get(int mostPopular)
+        public async Task<ActionResult<IEnumerable<Review>>> GetCity(string city, int mostPopular)
         {
             IQueryable<Review> query = _db.Reviews.AsQueryable();
+
+            IQueryable<Review> reviews = _db.Reviews;
+            IQueryable<Destination> destinations = _db.Destinations;
 
             if (mostPopular > 0)
             {
                 query = query.Where(entry => entry.Rating >= mostPopular);
+            }
+            if (city != null)
+            {
+                // query =
+                //     from r in _db.Reviews
+                //     join d in _db.Destinations on r.DestinationId equals d.DestinationId
+                //     where d.City == city
+                //     select r;
+                query = reviews
+                    .Join(
+                        destinations,
+                        review => review.ReviewId,
+                        destination => destination.DestinationId,
+                        (review, destination) => new { Review = review, Destination = destination } // two tables now combined into single object
+                    )
+                    .Where(reviewAndDestination => reviewAndDestination.Destination.City == city) // filter by accessing destination property in combined object
+                    .Select(reviewAndDestination => reviewAndDestination.Review); // discard Destination and select only Review so types of query match
             }
 
             return await query.ToListAsync();
